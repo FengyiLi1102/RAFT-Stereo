@@ -274,6 +274,7 @@ class RenderedClouds(StereoDataset):
 
         image_l_list = glob(os.path.join(root, "Left", 'rgb_*.PNG'))
         image_l_list.sort(key=num_sort)
+        print(image_l_list)
         image_r_list = glob(os.path.join(root, "Right", 'rgb_*.PNG'))
         image_r_list.sort(key=num_sort)
         disp_list = glob(os.path.join(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp/tgCloudPos_l",
