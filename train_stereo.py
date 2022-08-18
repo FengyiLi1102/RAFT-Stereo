@@ -233,7 +233,7 @@ if __name__ == '__main__':
     parser.add_argument('--valid_iters', type=int, default=25,
                         help='number of flow-field updates during validation forward pass')
 
-    # Architecure choices
+    # Architecture choices
     parser.add_argument('--corr_implementation', choices=["reg", "alt", "reg_cuda", "alt_cuda"], default="reg",
                         help="correlation volume implementation")
     parser.add_argument('--shared_backbone', action='store_true',
@@ -248,10 +248,10 @@ if __name__ == '__main__':
 
     # Data augmentation
     parser.add_argument('--img_gamma', type=float, nargs='+', default=None, help="gamma range")
-    parser.add_argument('--saturation_range', type=float, nargs='+', default=None, help='color saturation')
+    parser.add_argument('--saturation_range', type=float, nargs='+', default=[0, 1.4], help='color saturation')
     parser.add_argument('--do_flip', default=False, choices=['h', 'v'],
                         help='flip the images horizontally or vertically')
-    parser.add_argument('--spatial_scale', type=float, nargs='+', default=[0, 0], help='re-scale the images randomly')
+    parser.add_argument('--spatial_scale', type=float, nargs='+', default=[-0.2, 0.4], help='re-scale the images randomly')
     parser.add_argument('--noyjitter', action='store_true', help='don\'t simulate imperfect rectification')
     args = parser.parse_args()
 
