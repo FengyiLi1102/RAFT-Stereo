@@ -268,7 +268,7 @@ def num_sort(input):
 
 
 class RenderedClouds(StereoDataset):
-    def __init__(self, aug_params=None, root=r"/vol/bitbucket/fl4718/Utils/masked_rectified_rendered"):
+    def __init__(self, aug_params=None, root=r"/vol/bitbucket/fl4718/Utils/rectified_rendered_data"):
         super(RenderedClouds, self).__init__(aug_params, sparse=True, reader=frame_utils.readDispCloud)
         assert os.path.exists(root)
 
@@ -277,7 +277,7 @@ class RenderedClouds(StereoDataset):
         image_r_list = glob(os.path.join(root, "Right", 'rgb_*.PNG'))
         image_r_list.sort(key=num_sort)
         disp_list = glob(os.path.join(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp/tgCloudPos_l",
-                                      '*_disp.npy'))
+                                      'depth_tgCloudPos_*_disp.npy'))
         disp_list.sort(key=num_sort)
 
         for img1, img2, disp in zip(image_l_list, image_r_list, disp_list):
