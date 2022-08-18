@@ -316,32 +316,33 @@ def fetch_dataloader(args):
     if hasattr(args, "do_flip") and args.do_flip is not None:
         aug_params["do_flip"] = args.do_flip
 
-    train_dataset = None
-    for dataset_name in args.train_datasets:
-        if re.compile("middlebury_.*").fullmatch(dataset_name):
-            new_dataset = Middlebury(aug_params, split=dataset_name.replace('middlebury_', ''))
-        elif dataset_name == 'sceneflow':
-            clean_dataset = SceneFlowDatasets(aug_params, dstype='frames_cleanpass')
-            final_dataset = SceneFlowDatasets(aug_params, dstype='frames_finalpass')
-            new_dataset = (clean_dataset * 4) + (final_dataset * 4)
-            logging.info(f"Adding {len(new_dataset)} samples from SceneFlow")
-        elif 'kitti' in dataset_name:
-            new_dataset = KITTI(aug_params, split=dataset_name)
-            logging.info(f"Adding {len(new_dataset)} samples from KITTI")
-        elif dataset_name == 'sintel_stereo':
-            new_dataset = SintelStereo(aug_params) * 140
-            logging.info(f"Adding {len(new_dataset)} samples from Sintel Stereo")
-        elif dataset_name == 'falling_things':
-            new_dataset = FallingThings(aug_params) * 5
-            logging.info(f"Adding {len(new_dataset)} samples from FallingThings")
-        elif dataset_name.startswith('tartan_air'):
-            new_dataset = TartanAir(aug_params, keywords=dataset_name.split('_')[2:])
-            logging.info(f"Adding {len(new_dataset)} samples from Tartain Air")
-        elif dataset_name == "raw_clouds":
-            new_dataset = RenderedClouds(aug_params)
-            logging.info(f"Adding {len(new_dataset)} samples from Clouds")
+    train_dataset = RenderedClouds(aug_params)
+    logging.info(f"Adding {len(train_dataset)} samples from Clouds")
+    # for dataset_name in args.train_datasets:
+    #     if re.compile("middlebury_.*").fullmatch(dataset_name):
+    #         new_dataset = Middlebury(aug_params, split=dataset_name.replace('middlebury_', ''))
+    #     elif dataset_name == 'sceneflow':
+    #         clean_dataset = SceneFlowDatasets(aug_params, dstype='frames_cleanpass')
+    #         final_dataset = SceneFlowDatasets(aug_params, dstype='frames_finalpass')
+    #         new_dataset = (clean_dataset * 4) + (final_dataset * 4)
+    #         logging.info(f"Adding {len(new_dataset)} samples from SceneFlow")
+    #     elif 'kitti' in dataset_name:
+    #         new_dataset = KITTI(aug_params, split=dataset_name)
+    #         logging.info(f"Adding {len(new_dataset)} samples from KITTI")
+    #     elif dataset_name == 'sintel_stereo':
+    #         new_dataset = SintelStereo(aug_params) * 140
+    #         logging.info(f"Adding {len(new_dataset)} samples from Sintel Stereo")
+    #     elif dataset_name == 'falling_things':
+    #         new_dataset = FallingThings(aug_params) * 5
+    #         logging.info(f"Adding {len(new_dataset)} samples from FallingThings")
+    #     elif dataset_name.startswith('tartan_air'):
+    #         new_dataset = TartanAir(aug_params, keywords=dataset_name.split('_')[2:])
+    #         logging.info(f"Adding {len(new_dataset)} samples from Tartain Air")
+    #     elif dataset_name == "raw_clouds":
+    #         new_dataset = RenderedClouds(aug_params)
+    #         logging.info(f"Adding {len(new_dataset)} samples from Clouds")
 
-        train_dataset = new_dataset if train_dataset is None else train_dataset + new_dataset
+    # train_dataset = new_dataset if train_dataset is None else train_dataset + new_dataset
 
     train_loader = data.DataLoader(train_dataset, batch_size=args.batch_size,
                                    pin_memory=True, shuffle=True,
