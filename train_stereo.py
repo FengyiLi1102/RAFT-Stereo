@@ -156,8 +156,10 @@ def train(args):
     should_keep_training = True
     global_batch_num = 0
     while should_keep_training:
-
+        print("===")
         for i_batch, (_, *data_blob) in enumerate(tqdm(train_loader)):
+            print(i_batch)
+
             optimizer.zero_grad()
             image1, image2, flow, valid = [x.cuda() for x in data_blob]
 
