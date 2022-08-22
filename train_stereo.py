@@ -219,7 +219,7 @@ if __name__ == '__main__':
     parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision', default=True)
 
     # Training parameters
-    parser.add_argument('--batch_size', type=int, default=8, help="batch size used during training.")
+    parser.add_argument('--batch_size', type=int, default=10, help="batch size used during training.")
     parser.add_argument('--train_datasets', nargs='+', default=['raw_clouds'], help="training datasets.")
     parser.add_argument('--lr', type=float, default=0.0002, help="max learning rate.")
     parser.add_argument('--num_steps', type=int, default=100000, help="length of training schedule.")
