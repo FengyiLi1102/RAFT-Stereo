@@ -279,7 +279,6 @@ class RenderedClouds(StereoDataset):
         disp_list = glob(os.path.join(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp/tgCloudPos_l",
                                       'depth_tgCloudPos_*_disp.npy'))
         disp_list.sort(key=num_sort)
-        print(disp_list)
 
         for img1, img2, disp in zip(image_l_list, image_r_list, disp_list):
             self.image_list += [[img1, img2]]
