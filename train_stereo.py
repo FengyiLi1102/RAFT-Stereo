@@ -156,7 +156,6 @@ def train(args):
     should_keep_training = True
     global_batch_num = 0
     while should_keep_training:
-        print("===")
         for i_batch, (_, *data_blob) in enumerate(tqdm(train_loader)):
             print(i_batch)
 
@@ -222,7 +221,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=8, help="batch size used during training.")
     parser.add_argument('--train_datasets', nargs='+', default=['raw_clouds'], help="training datasets.")
     parser.add_argument('--lr', type=float, default=0.0002, help="max learning rate.")
-    parser.add_argument('--num_steps', type=int, default=100000, help="length of training schedule.")
+    parser.add_argument('--num_steps', type=int, default=200000, help="length of training schedule.")
     parser.add_argument('--image_size', type=int, nargs='+', default=[480, 640],
                         help="size of the random image crops used during training.")
     parser.add_argument('--train_iters', type=int, default=10,
