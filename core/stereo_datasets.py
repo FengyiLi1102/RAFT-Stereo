@@ -119,148 +119,148 @@ class StereoDataset(data.Dataset):
         return len(self.image_list)
 
 
-class SceneFlowDatasets(StereoDataset):
-    def __init__(self, aug_params=None, root='datasets', dstype='frames_cleanpass', things_test=False):
-        super(SceneFlowDatasets, self).__init__(aug_params)
-        self.root = root
-        self.dstype = dstype
-
-        if things_test:
-            self._add_things("TEST")
-        else:
-            self._add_things("TRAIN")
-            self._add_monkaa()
-            self._add_driving()
-
-    def _add_things(self, split='TRAIN'):
-        """ Add FlyingThings3D data """
-
-        original_length = len(self.disparity_list)
-        root = osp.join(self.root, 'FlyingThings3D')
-        left_images = sorted(glob(osp.join(root, self.dstype, split, '*/*/left/*.png')))
-        right_images = [im.replace('left', 'right') for im in left_images]
-        disparity_images = [im.replace(self.dstype, 'disparity').replace('.png', '.pfm') for im in left_images]
-
-        # Choose a random subset of 400 images for validation
-        state = np.random.get_state()
-        np.random.seed(1000)
-        val_idxs = set(np.random.permutation(len(left_images))[:400])
-        np.random.set_state(state)
-
-        for idx, (img1, img2, disp) in enumerate(zip(left_images, right_images, disparity_images)):
-            if (split == 'TEST' and idx in val_idxs) or split == 'TRAIN':
-                self.image_list += [[img1, img2]]
-                self.disparity_list += [disp]
-        logging.info(f"Added {len(self.disparity_list) - original_length} from FlyingThings {self.dstype}")
-
-    def _add_monkaa(self):
-        """ Add FlyingThings3D data """
-
-        original_length = len(self.disparity_list)
-        root = osp.join(self.root, 'Monkaa')
-        left_images = sorted(glob(osp.join(root, self.dstype, '*/left/*.png')))
-        right_images = [image_file.replace('left', 'right') for image_file in left_images]
-        disparity_images = [im.replace(self.dstype, 'disparity').replace('.png', '.pfm') for im in left_images]
-
-        for img1, img2, disp in zip(left_images, right_images, disparity_images):
-            self.image_list += [[img1, img2]]
-            self.disparity_list += [disp]
-        logging.info(f"Added {len(self.disparity_list) - original_length} from Monkaa {self.dstype}")
-
-    def _add_driving(self):
-        """ Add FlyingThings3D data """
-
-        original_length = len(self.disparity_list)
-        root = osp.join(self.root, 'Driving')
-        left_images = sorted(glob(osp.join(root, self.dstype, '*/*/*/left/*.png')))
-        right_images = [image_file.replace('left', 'right') for image_file in left_images]
-        disparity_images = [im.replace(self.dstype, 'disparity').replace('.png', '.pfm') for im in left_images]
-
-        for img1, img2, disp in zip(left_images, right_images, disparity_images):
-            self.image_list += [[img1, img2]]
-            self.disparity_list += [disp]
-        logging.info(f"Added {len(self.disparity_list) - original_length} from Driving {self.dstype}")
-
-
-class ETH3D(StereoDataset):
-    def __init__(self, aug_params=None, root='datasets/ETH3D', split='training'):
-        super(ETH3D, self).__init__(aug_params, sparse=True)
-
-        image1_list = sorted(glob(osp.join(root, f'two_view_{split}/*/im0.png')))
-        image2_list = sorted(glob(osp.join(root, f'two_view_{split}/*/im1.png')))
-        disp_list = sorted(glob(osp.join(root, 'two_view_training_gt/*/disp0GT.pfm'))) if split == 'training' \
-            else [osp.join(root, 'two_view_training_gt/playground_1l/disp0GT.pfm')] * len(image1_list)
-
-        for img1, img2, disp in zip(image1_list, image2_list, disp_list):
-            self.image_list += [[img1, img2]]
-            self.disparity_list += [disp]
-
-
-class SintelStereo(StereoDataset):
-    def __init__(self, aug_params=None, root='datasets/SintelStereo'):
-        super().__init__(aug_params, sparse=True, reader=frame_utils.readDispSintelStereo)
-
-        image1_list = sorted(glob(osp.join(root, 'training/*_left/*/frame_*.png')))
-        image2_list = sorted(glob(osp.join(root, 'training/*_right/*/frame_*.png')))
-        disp_list = sorted(glob(osp.join(root, 'training/disparities/*/frame_*.png'))) * 2
-
-        for img1, img2, disp in zip(image1_list, image2_list, disp_list):
-            assert img1.split('/')[-2:] == disp.split('/')[-2:]
-            self.image_list += [[img1, img2]]
-            self.disparity_list += [disp]
-
-
-class FallingThings(StereoDataset):
-    def __init__(self, aug_params=None, root='datasets/FallingThings'):
-        super().__init__(aug_params, reader=frame_utils.readDispFallingThings)
-        assert os.path.exists(root)
-
-        with open(os.path.join(root, 'filenames.txt'), 'r') as f:
-            filenames = sorted(f.read().splitlines())
-
-        image1_list = [osp.join(root, e) for e in filenames]
-        image2_list = [osp.join(root, e.replace('left.jpg', 'right.jpg')) for e in filenames]
-        disp_list = [osp.join(root, e.replace('left.jpg', 'left.depth.png')) for e in filenames]
-
-        for img1, img2, disp in zip(image1_list, image2_list, disp_list):
-            self.image_list += [[img1, img2]]
-            self.disparity_list += [disp]
-
-
-class TartanAir(StereoDataset):
-    def __init__(self, aug_params=None, root='datasets', keywords=[]):
-        super().__init__(aug_params, reader=frame_utils.readDispTartanAir)
-        assert os.path.exists(root)
-
-        with open(os.path.join(root, 'tartanair_filenames.txt'), 'r') as f:
-            filenames = sorted(list(filter(lambda s: 'seasonsforest_winter/Easy' not in s, f.read().splitlines())))
-            for kw in keywords:
-                filenames = sorted(list(filter(lambda s: kw in s.lower(), filenames)))
-
-        image1_list = [osp.join(root, e) for e in filenames]
-        image2_list = [osp.join(root, e.replace('_left', '_right')) for e in filenames]
-        disp_list = [osp.join(root, e.replace('image_left', 'depth_left').replace('left.png', 'left_depth.npy')) for e
-                     in filenames]
-
-        for img1, img2, disp in zip(image1_list, image2_list, disp_list):
-            self.image_list += [[img1, img2]]
-            self.disparity_list += [disp]
-
-
-class KITTI(StereoDataset):
-    def __init__(self, aug_params=None, root='datasets/KITTI', image_set='training'):
-        super(KITTI, self).__init__(aug_params, sparse=True, reader=frame_utils.readDispKITTI)
-        assert os.path.exists(root)
-
-        image1_list = sorted(glob(os.path.join(root, image_set, 'image_2/*_10.png')))
-        image2_list = sorted(glob(os.path.join(root, image_set, 'image_3/*_10.png')))
-        disp_list = sorted(
-            glob(os.path.join(root, 'training', 'disp_occ_0/*_10.png'))) if image_set == 'training' \
-            else [osp.join(root, 'training/disp_occ_0/000085_10.png')] * len(image1_list)
-
-        for idx, (img1, img2, disp) in enumerate(zip(image1_list, image2_list, disp_list)):
-            self.image_list += [[img1, img2]]
-            self.disparity_list += [disp]
+# class SceneFlowDatasets(StereoDataset):
+#     def __init__(self, aug_params=None, root='datasets', dstype='frames_cleanpass', things_test=False):
+#         super(SceneFlowDatasets, self).__init__(aug_params)
+#         self.root = root
+#         self.dstype = dstype
+#
+#         if things_test:
+#             self._add_things("TEST")
+#         else:
+#             self._add_things("TRAIN")
+#             self._add_monkaa()
+#             self._add_driving()
+#
+#     def _add_things(self, split='TRAIN'):
+#         """ Add FlyingThings3D data """
+#
+#         original_length = len(self.disparity_list)
+#         root = osp.join(self.root, 'FlyingThings3D')
+#         left_images = sorted(glob(osp.join(root, self.dstype, split, '*/*/left/*.png')))
+#         right_images = [im.replace('left', 'right') for im in left_images]
+#         disparity_images = [im.replace(self.dstype, 'disparity').replace('.png', '.pfm') for im in left_images]
+#
+#         # Choose a random subset of 400 images for validation
+#         state = np.random.get_state()
+#         np.random.seed(1000)
+#         val_idxs = set(np.random.permutation(len(left_images))[:400])
+#         np.random.set_state(state)
+#
+#         for idx, (img1, img2, disp) in enumerate(zip(left_images, right_images, disparity_images)):
+#             if (split == 'TEST' and idx in val_idxs) or split == 'TRAIN':
+#                 self.image_list += [[img1, img2]]
+#                 self.disparity_list += [disp]
+#         logging.info(f"Added {len(self.disparity_list) - original_length} from FlyingThings {self.dstype}")
+#
+#     def _add_monkaa(self):
+#         """ Add FlyingThings3D data """
+#
+#         original_length = len(self.disparity_list)
+#         root = osp.join(self.root, 'Monkaa')
+#         left_images = sorted(glob(osp.join(root, self.dstype, '*/left/*.png')))
+#         right_images = [image_file.replace('left', 'right') for image_file in left_images]
+#         disparity_images = [im.replace(self.dstype, 'disparity').replace('.png', '.pfm') for im in left_images]
+#
+#         for img1, img2, disp in zip(left_images, right_images, disparity_images):
+#             self.image_list += [[img1, img2]]
+#             self.disparity_list += [disp]
+#         logging.info(f"Added {len(self.disparity_list) - original_length} from Monkaa {self.dstype}")
+#
+#     def _add_driving(self):
+#         """ Add FlyingThings3D data """
+#
+#         original_length = len(self.disparity_list)
+#         root = osp.join(self.root, 'Driving')
+#         left_images = sorted(glob(osp.join(root, self.dstype, '*/*/*/left/*.png')))
+#         right_images = [image_file.replace('left', 'right') for image_file in left_images]
+#         disparity_images = [im.replace(self.dstype, 'disparity').replace('.png', '.pfm') for im in left_images]
+#
+#         for img1, img2, disp in zip(left_images, right_images, disparity_images):
+#             self.image_list += [[img1, img2]]
+#             self.disparity_list += [disp]
+#         logging.info(f"Added {len(self.disparity_list) - original_length} from Driving {self.dstype}")
+#
+#
+# class ETH3D(StereoDataset):
+#     def __init__(self, aug_params=None, root='datasets/ETH3D', split='training'):
+#         super(ETH3D, self).__init__(aug_params, sparse=True)
+#
+#         image1_list = sorted(glob(osp.join(root, f'two_view_{split}/*/im0.png')))
+#         image2_list = sorted(glob(osp.join(root, f'two_view_{split}/*/im1.png')))
+#         disp_list = sorted(glob(osp.join(root, 'two_view_training_gt/*/disp0GT.pfm'))) if split == 'training' \
+#             else [osp.join(root, 'two_view_training_gt/playground_1l/disp0GT.pfm')] * len(image1_list)
+#
+#         for img1, img2, disp in zip(image1_list, image2_list, disp_list):
+#             self.image_list += [[img1, img2]]
+#             self.disparity_list += [disp]
+#
+#
+# class SintelStereo(StereoDataset):
+#     def __init__(self, aug_params=None, root='datasets/SintelStereo'):
+#         super().__init__(aug_params, sparse=True, reader=frame_utils.readDispSintelStereo)
+#
+#         image1_list = sorted(glob(osp.join(root, 'training/*_left/*/frame_*.png')))
+#         image2_list = sorted(glob(osp.join(root, 'training/*_right/*/frame_*.png')))
+#         disp_list = sorted(glob(osp.join(root, 'training/disparities/*/frame_*.png'))) * 2
+#
+#         for img1, img2, disp in zip(image1_list, image2_list, disp_list):
+#             assert img1.split('/')[-2:] == disp.split('/')[-2:]
+#             self.image_list += [[img1, img2]]
+#             self.disparity_list += [disp]
+#
+#
+# class FallingThings(StereoDataset):
+#     def __init__(self, aug_params=None, root='datasets/FallingThings'):
+#         super().__init__(aug_params, reader=frame_utils.readDispFallingThings)
+#         assert os.path.exists(root)
+#
+#         with open(os.path.join(root, 'filenames.txt'), 'r') as f:
+#             filenames = sorted(f.read().splitlines())
+#
+#         image1_list = [osp.join(root, e) for e in filenames]
+#         image2_list = [osp.join(root, e.replace('left.jpg', 'right.jpg')) for e in filenames]
+#         disp_list = [osp.join(root, e.replace('left.jpg', 'left.depth.png')) for e in filenames]
+#
+#         for img1, img2, disp in zip(image1_list, image2_list, disp_list):
+#             self.image_list += [[img1, img2]]
+#             self.disparity_list += [disp]
+#
+#
+# class TartanAir(StereoDataset):
+#     def __init__(self, aug_params=None, root='datasets', keywords=[]):
+#         super().__init__(aug_params, reader=frame_utils.readDispTartanAir)
+#         assert os.path.exists(root)
+#
+#         with open(os.path.join(root, 'tartanair_filenames.txt'), 'r') as f:
+#             filenames = sorted(list(filter(lambda s: 'seasonsforest_winter/Easy' not in s, f.read().splitlines())))
+#             for kw in keywords:
+#                 filenames = sorted(list(filter(lambda s: kw in s.lower(), filenames)))
+#
+#         image1_list = [osp.join(root, e) for e in filenames]
+#         image2_list = [osp.join(root, e.replace('_left', '_right')) for e in filenames]
+#         disp_list = [osp.join(root, e.replace('image_left', 'depth_left').replace('left.png', 'left_depth.npy')) for e
+#                      in filenames]
+#
+#         for img1, img2, disp in zip(image1_list, image2_list, disp_list):
+#             self.image_list += [[img1, img2]]
+#             self.disparity_list += [disp]
+#
+#
+# class KITTI(StereoDataset):
+#     def __init__(self, aug_params=None, root='datasets/KITTI', image_set='training'):
+#         super(KITTI, self).__init__(aug_params, sparse=True, reader=frame_utils.readDispKITTI)
+#         assert os.path.exists(root)
+#
+#         image1_list = sorted(glob(os.path.join(root, image_set, 'image_2/*_10.png')))
+#         image2_list = sorted(glob(os.path.join(root, image_set, 'image_3/*_10.png')))
+#         disp_list = sorted(
+#             glob(os.path.join(root, 'training', 'disp_occ_0/*_10.png'))) if image_set == 'training' \
+#             else [osp.join(root, 'training/disp_occ_0/000085_10.png')] * len(image1_list)
+#
+#         for idx, (img1, img2, disp) in enumerate(zip(image1_list, image2_list, disp_list)):
+#             self.image_list += [[img1, img2]]
+#             self.disparity_list += [disp]
 
 
 def num_sort(input):
