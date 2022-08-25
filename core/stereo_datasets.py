@@ -268,19 +268,35 @@ def num_sort(input):
 
 
 class RenderedClouds(StereoDataset):
-    def __init__(self, aug_params=None, root=r"/vol/bitbucket/fl4718/Utils/rectified_rendered_data"):
+    def __init__(self, aug_params=None, root=r"/vol/bitbucket/fl4718/Utils/rectified_rendered_data",
+                 split=r"train_files.txt"):
         super(RenderedClouds, self).__init__(aug_params, sparse=True, reader=frame_utils.readDispCloud)
         assert os.path.exists(root)
 
-        image_l_list = glob(os.path.join(root, "Left", 'rgb_*.PNG'))
-        image_l_list.sort(key=num_sort)
-        image_r_list = glob(os.path.join(root, "Right", 'rgb_*.PNG'))
-        image_r_list.sort(key=num_sort)
-        disp_list = glob(os.path.join(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp/tgCloudPos_l",
-                                      'depth_tgCloudPos_*_disp.npy'))
+        img_l_list = []
+        img_r_list = []
+        disp_list = []
+        with open(os.path.join(r"splits/new_rendered", split), "r") as tf:
+            train_list = tf.readlines()
+            for line in train_list:
+                view = line.split()[0]
+                index = line.split()[1]
+                if view == "Left":
+                    img_l_list.append(os.path.join(root, "Left", f"rgb_{index}.PNG"))
+                    disp_list.append(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp/tgCloudPos_l"
+                                     r"/depth_tgCloudPos_{}_disp.npy".format(index))
+                else:
+                    img_r_list.append(os.path.join(root, "Right", f"rgb_{line.split()[1]}.PNG"))
+
+        # image_l_list = glob(os.path.join(root, "Left", 'rgb_*.PNG'))
+        img_l_list.sort(key=num_sort)
+        # image_r_list = glob(os.path.join(root, "Right", 'rgb_*.PNG'))
+        img_r_list.sort(key=num_sort)
+        # disp_list = glob(os.path.join(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp/tgCloudPos_l",
+        #                               'depth_tgCloudPos_*_disp.npy'))
         disp_list.sort(key=num_sort)
 
-        for img1, img2, disp in zip(image_l_list, image_r_list, disp_list):
+        for img1, img2, disp in zip(img_l_list, img_r_list, disp_list):
             self.image_list += [[img1, img2]]
             self.disparity_list += [disp]
 

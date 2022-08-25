@@ -147,6 +147,45 @@ def validate_things(model, iters=32, mixed_prec=False):
 
 
 @torch.no_grad()
+def validate_clouds(model, iters=32, mixed_prec=False):
+    """ Peform validation using the rendered clouds split """
+    model.eval()
+    aug_params = {}
+    val_dataset = datasets.RenderedClouds(aug_params, split=r"val_files.txt")
+
+    out_list, epe_list = [], []
+    for val_id in tqdm(range(len(val_dataset))):
+        _, image1, image2, flow_gt, valid_gt = val_dataset[val_id]
+        image1 = image1[None].cuda()
+        image2 = image2[None].cuda()
+
+        padder = InputPadder(image1.shape, divis_by=32)
+        image1, image2 = padder.pad(image1, image2)
+
+        with autocast(enabled=mixed_prec):
+            _, flow_pr = model(image1, image2, iters=iters, test_mode=True)
+        flow_pr = padder.unpad(flow_pr).cpu().squeeze(0)
+        assert flow_pr.shape == flow_gt.shape, (flow_pr.shape, flow_gt.shape)
+        epe = torch.sum((flow_pr - flow_gt)**2, dim=0).sqrt()
+
+        epe = epe.flatten()
+        val = (valid_gt.flatten() >= 0.5) & (flow_gt.abs().flatten() < 192)
+
+        out = (epe > 1.0)
+        epe_list.append(epe[val].mean().item())
+        out_list.append(out[val].cpu().numpy())
+
+    epe_list = np.array(epe_list)
+    out_list = np.concatenate(out_list)
+
+    epe = np.mean(epe_list)
+    d1 = 100 * np.mean(out_list)
+
+    print("Validation Rendered clouds: %f, %f" % (epe, d1))
+    return {'clouds-epe': epe, 'clouds-d1': d1}
+
+
+@torch.no_grad()
 def validate_middlebury(model, iters=32, split='F', mixed_prec=False):
     """ Peform validation using the Middlebury-V3 dataset """
     model.eval()

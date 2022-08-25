@@ -157,8 +157,6 @@ def train(args):
     global_batch_num = 0
     while should_keep_training:
         for i_batch, (_, *data_blob) in enumerate(tqdm(train_loader)):
-            print(i_batch)
-
             optimizer.zero_grad()
             image1, image2, flow, valid = [x.cuda() for x in data_blob]
 
@@ -185,7 +183,7 @@ def train(args):
                 logging.info(f"Saving file {save_path.absolute()}")
                 torch.save(model.state_dict(), save_path)
 
-                results = validate_things(model.module, iters=args.valid_iters)
+                results = validate_clouds(model.module, iters=args.valid_iters)
 
                 logger.write_dict(results)
 
