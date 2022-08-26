@@ -149,7 +149,7 @@ def train(args):
     model.train()
     model.module.freeze_bn()  # We keep BatchNorm frozen
 
-    validation_frequency = 50000
+    validation_frequency = 100
 
     scaler = GradScaler(enabled=args.mixed_precision)
 
