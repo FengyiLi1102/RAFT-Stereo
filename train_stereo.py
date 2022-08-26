@@ -218,7 +218,7 @@ if __name__ == '__main__':
     # Training parameters
     parser.add_argument('--batch_size', type=int, default=8, help="batch size used during training.")
     parser.add_argument('--train_datasets', nargs='+', default=['raw_clouds'], help="training datasets.")
-    parser.add_argument('--lr', type=float, default=0.0005, help="max learning rate.")
+    parser.add_argument('--lr', type=float, default=0.001, help="max learning rate.")
     parser.add_argument('--num_steps', type=int, default=200000, help="length of training schedule.")
     parser.add_argument('--image_size', type=int, nargs='+', default=[480, 640],
                         help="size of the random image crops used during training.")
