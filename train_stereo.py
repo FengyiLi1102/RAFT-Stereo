@@ -222,12 +222,12 @@ if __name__ == '__main__':
     parser.add_argument('--num_steps', type=int, default=200000, help="length of training schedule.")
     parser.add_argument('--image_size', type=int, nargs='+', default=[480, 640],
                         help="size of the random image crops used during training.")
-    parser.add_argument('--train_iters', type=int, default=22,
+    parser.add_argument('--train_iters', type=int, default=15,
                         help="number of updates to the disparity field in each forward pass.")
     parser.add_argument('--wdecay', type=float, default=.00001, help="Weight decay in optimizer.")
 
     # Validation parameters
-    parser.add_argument('--valid_iters', type=int, default=32,
+    parser.add_argument('--valid_iters', type=int, default=28,
                         help='number of flow-field updates during validation forward pass')
 
     # Architecture choices
