@@ -227,7 +227,7 @@ if __name__ == '__main__':
     parser.add_argument('--wdecay', type=float, default=.00001, help="Weight decay in optimizer.")
 
     # Validation parameters
-    parser.add_argument('--valid_iters', type=int, default=25,
+    parser.add_argument('--valid_iters', type=int, default=32,
                         help='number of flow-field updates during validation forward pass')
 
     # Architecture choices
