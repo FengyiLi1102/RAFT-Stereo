@@ -283,7 +283,8 @@ class RenderedClouds(StereoDataset):
                 index = line.split()[1]
                 if view == "Left":
                     img_l_list.append(os.path.join(root, "Left", f"rgb_{index}.PNG"))
-                    disp_list.append(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp/tgCloudPos_l"
+                    disp_list.append(r"/vol/bitbucket/fl4718/Utils/rectified_rendered_disp_new"
+                                     r"/rectified_rendered_disp/tgCloudPos_l "
                                      r"/depth_tgCloudPos_{}_disp.npy".format(index))
                 else:
                     img_r_list.append(os.path.join(root, "Right", f"rgb_{line.split()[1]}.PNG"))
