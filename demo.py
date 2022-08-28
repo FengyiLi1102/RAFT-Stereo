@@ -81,9 +81,8 @@ def demo(args):
             else:
                 os.mkdir(os.path.join(output_directory, folder, file_stem))
 
-            print(re.split(r"/\.", imfile1))
             if args.save_numpy:
-                np.save(os.path.join(output_directory, folder, file_stem, re.split(r"/.", imfile1)[-2], r".npy"),
+                np.save(os.path.join(output_directory, folder, file_stem, re.split(r"[/.]", imfile1)[-2], r".npy"),
                         flow_up.cpu().numpy().squeeze())
 
             plt.imsave(os.path.join(output_directory, folder, file_stem, imfile1.split("/")[-1]),
