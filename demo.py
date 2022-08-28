@@ -16,7 +16,7 @@ import re
 import os
 
 DEVICE = 'cuda'
-root = r"vol/bitbucket/fl4718/Utils/rectified_rendered_data"
+root = r"../Utils/rectified_rendered_data"
 
 
 def load_image(imfile):
