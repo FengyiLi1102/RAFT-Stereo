@@ -93,14 +93,14 @@ def demo(args):
                         flow_up.cpu().numpy().squeeze())
 
             plt.imsave(os.path.join(output_directory, folder, file_stem, imfile1.split("/")[-1]),
-                       -flow_up.cpu().numpy().squeeze(), cmap='jet', vmax=args.vmax, vmin=args.vmin)
+                       -flow_up.cpu().numpy().squeeze(), cmap='jet', vmax=args.vmax)
             # plt.imsave(output_directory / f"{file_stem}.png", -flow_up.cpu().numpy().squeeze(), cmap='jet', vmax=255)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--vmax", type=int)
-    parser.add_argument("--vmin", type=int, default=0)
+    parser.add_argument("--vmin", type=int)
     parser.add_argument('--folder', help="restore checkpoint", default=r"20k_val")
     parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered/")
     parser.add_argument("--rendered", action="store_true")
