@@ -93,7 +93,7 @@ def demo(args):
                         flow_up.cpu().numpy().squeeze())
 
             plt.imsave(os.path.join(output_directory, folder, file_stem, imfile1.split("/")[-1]),
-                       -flow_up.cpu().numpy().squeeze(), cmap='jet', vmax=args.vmax)
+                       -flow_up.cpu().numpy().squeeze(), cmap='jet')
             # plt.imsave(output_directory / f"{file_stem}.png", -flow_up.cpu().numpy().squeeze(), cmap='jet', vmax=255)
 
 
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered/")
     parser.add_argument("--rendered", action="store_true")
     parser.add_argument('--restore_ckpt', help="restore checkpoint",
-                        default=r"checkpoints_new/30000_raft_stereo_rendered.pth")
+                        default=r"checkpoints_new/40000_raft_stereo_rendered.pth")
 
     parser.add_argument('--save_numpy', action='store_true', help='save output as numpy arrays')
     parser.add_argument('-l', '--left_imgs', help="path to all first (left) frames",
