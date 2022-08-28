@@ -68,6 +68,11 @@ def demo(args):
                 np.save(output_directory / f"{file_stem}.npy", flow_up.cpu().numpy().squeeze())
 
             folder = args.folder
+            if os.path.exists(output_directory):
+                pass
+            else:
+                os.mkdir(output_directory)
+
             if os.path.exists(os.path.join(output_directory, folder)):
                 pass
             else:
