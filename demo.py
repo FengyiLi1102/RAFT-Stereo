@@ -19,6 +19,10 @@ DEVICE = 'cuda'
 root = r"../Utils/rectified_rendered_data"
 
 
+def num_sort(input):
+    return list(map(int, re.findall(r"\d+", input)))
+
+
 def load_image(imfile):
     img = np.array(Image.open(imfile)).astype(np.uint8)
     img = torch.from_numpy(img).permute(2, 0, 1).float()
@@ -52,6 +56,9 @@ def demo(args):
         else:
             left_images = sorted(glob.glob(args.left_imgs, recursive=True))
             right_images = sorted(glob.glob(args.right_imgs, recursive=True))
+
+        left_images.sort(key=num_sort)
+        right_images.sort(key=num_sort)
 
         print(f"Found {len(left_images)} images. Saving files to {output_directory}/")
 
@@ -95,9 +102,8 @@ if __name__ == '__main__':
     parser.add_argument('--folder', help="restore checkpoint", default=r"20k_val")
     parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered/")
     parser.add_argument("--rendered", action="store_true")
-    parser.add_argument('--restore_ckpt', help="restore checkpoint", default=r"checkpoints_new/30000_raft_stereo_rendered.pth")
-
-
+    parser.add_argument('--restore_ckpt', help="restore checkpoint",
+                        default=r"checkpoints_new/30000_raft_stereo_rendered.pth")
 
     parser.add_argument('--save_numpy', action='store_true', help='save output as numpy arrays')
     parser.add_argument('-l', '--left_imgs', help="path to all first (left) frames",
