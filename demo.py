@@ -91,7 +91,7 @@ def demo(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--folder', help="restore checkpoint", default=r"20k_val")
-    parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered")
+    parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered/")
     parser.add_argument("--rendered", action="store_true")
     parser.add_argument('--restore_ckpt', help="restore checkpoint", default=r"checkpoints_new/30000_raft_stereo_rendered.pth")
     parser.add_argument('--save_numpy', action='store_true', help='save output as numpy arrays')
