@@ -100,7 +100,7 @@ def demo(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--vmax", type=int)
-    parser.add_argument("--vmin", type=int)
+    parser.add_argument("--vmin", type=int, default=0)
     parser.add_argument('--folder', help="restore checkpoint", default=r"20k_val")
     parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered/")
     parser.add_argument("--rendered", action="store_true")
