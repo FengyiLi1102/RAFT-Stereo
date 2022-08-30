@@ -131,7 +131,7 @@ class Logger:
 
 
 def train(args):
-    if os.path.exists(args.foler):
+    if os.path.exists(args.folder):
         pass
     else:
         os.mkdir(args.folder)
