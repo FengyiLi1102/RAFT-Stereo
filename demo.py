@@ -93,7 +93,7 @@ def demo(args):
                         flow_up.cpu().numpy().squeeze())
 
             plt.imsave(os.path.join(output_directory, folder, file_stem, imfile1.split("/")[-1]),
-                       -flow_up.cpu().numpy().squeeze(), cmap='jet', vmax=args.vmax)
+                       -flow_up.cpu().numpy().squeeze(), cmap='jet')
             # plt.imsave(output_directory / f"{file_stem}.png", -flow_up.cpu().numpy().squeeze(), cmap='jet', vmax=255)
 
 
