@@ -101,11 +101,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--vmax", type=int, default=255)
     parser.add_argument("--vmin", type=int)
-    parser.add_argument('--folder', help="restore checkpoint", default=r"80k_val")
+    parser.add_argument('--folder', help="restore checkpoint", default=r"500_10k_val")
     parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered/")
     parser.add_argument("--rendered", action="store_true")
     parser.add_argument('--restore_ckpt', help="restore checkpoint",
-                        default=r"checkpoints_new/80000_raft_stereo_rendered.pth")
+                        default=r"checkpoints_500/10000_raft_stereo_rendered.pth")
 
     parser.add_argument('--save_numpy', action='store_true', help='save output as numpy arrays', default=True)
     parser.add_argument('-l', '--left_imgs', help="path to all first (left) frames",
