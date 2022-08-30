@@ -183,7 +183,7 @@ def train(args):
                 logging.info(f"Saving file {save_path.absolute()}")
                 torch.save(model.state_dict(), save_path)
 
-                results = validate_clouds(model.module, iters=args.valid_iters)
+                results = validate_clouds(model.module, args.split, iters=args.valid_iters)
 
                 logger.write_dict(results)
 
@@ -211,6 +211,7 @@ def train(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument("--split", type=str)
     parser.add_argument('--name', default='raft_stereo_rendered', help="name your experiment")
     parser.add_argument('--restore_ckpt', help="restore checkpoint")
     parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision', default=True)

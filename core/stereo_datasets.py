@@ -268,7 +268,7 @@ def num_sort(input):
 
 
 class RenderedClouds(StereoDataset):
-    def __init__(self, aug_params=None, root=r"/vol/bitbucket/fl4718/Utils/rectified_rendered_data",
+    def __init__(self, split_root, aug_params=None, root=r"/vol/bitbucket/fl4718/Utils/rectified_rendered_data",
                  split=r"train_files.txt"):
         super(RenderedClouds, self).__init__(aug_params, sparse=True, reader=frame_utils.readDispCloud)
         assert os.path.exists(root)
@@ -276,7 +276,7 @@ class RenderedClouds(StereoDataset):
         img_l_list = []
         img_r_list = []
         disp_list = []
-        with open(os.path.join(r"splits/new_rendered", split), "r") as tf:
+        with open(os.path.join(r"splits", split_root, split), "r") as tf:
             train_list = tf.readlines()
             for line in train_list:
                 view = line.split()[0]
@@ -333,7 +333,7 @@ def fetch_dataloader(args):
     if hasattr(args, "do_flip") and args.do_flip is not None:
         aug_params["do_flip"] = args.do_flip
 
-    train_dataset = RenderedClouds(aug_params)
+    train_dataset = RenderedClouds(args.split, aug_params)
     logging.info(f"Adding {len(train_dataset)} samples from Clouds")
     # for dataset_name in args.train_datasets:
     #     if re.compile("middlebury_.*").fullmatch(dataset_name):

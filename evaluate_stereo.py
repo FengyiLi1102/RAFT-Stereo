@@ -147,11 +147,11 @@ def validate_things(model, iters=32, mixed_prec=False):
 
 
 @torch.no_grad()
-def validate_clouds(model, iters=32, mixed_prec=False):
+def validate_clouds(model, split_root, iters=32, mixed_prec=False):
     """ Peform validation using the rendered clouds split """
     model.eval()
     aug_params = {}
-    val_dataset = datasets.RenderedClouds(aug_params, split=r"val_files.txt")
+    val_dataset = datasets.RenderedClouds(split_root, aug_params, split=r"val_files.txt")
 
     out_list, epe_list = [], []
     for val_id in tqdm(range(len(val_dataset))):
