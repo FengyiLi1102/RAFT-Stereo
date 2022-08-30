@@ -1,5 +1,6 @@
 from __future__ import print_function, division
 
+import os.path
 from pathlib import Path
 
 import numpy as np
@@ -130,6 +131,11 @@ class Logger:
 
 
 def train(args):
+    if os.path.exists(args.foler):
+        pass
+    else:
+        os.mkdir(args.folder)
+
     model = nn.DataParallel(RAFTStereo(args))
     print("Parameter Count: %d" % count_parameters(model))
 
@@ -149,7 +155,7 @@ def train(args):
     model.train()
     model.module.freeze_bn()  # We keep BatchNorm frozen
 
-    validation_frequency = 10000
+    validation_frequency = 100
 
     scaler = GradScaler(enabled=args.mixed_precision)
 
@@ -179,7 +185,7 @@ def train(args):
             logger.push(metrics)
 
             if total_steps % validation_frequency == validation_frequency - 1:
-                save_path = Path('checkpoints_new/%d_%s.pth' % (total_steps + 1, args.name))
+                save_path = Path(f'{args.folder}/%d_%s.pth' % (total_steps + 1, args.name))
                 logging.info(f"Saving file {save_path.absolute()}")
                 torch.save(model.state_dict(), save_path)
 
@@ -203,7 +209,7 @@ def train(args):
 
     print("FINISHED TRAINING")
     logger.close()
-    PATH = 'checkpoints/%s.pth' % args.name
+    PATH = f'{args.folder}/%s.pth' % args.name
     torch.save(model.state_dict(), PATH)
 
     return PATH
@@ -212,6 +218,7 @@ def train(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--split", type=str)
+    parser.add_argument("--folder", type=str)
     parser.add_argument('--name', default='raft_stereo_rendered', help="name your experiment")
     parser.add_argument('--restore_ckpt', help="restore checkpoint")
     parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision', default=True)
