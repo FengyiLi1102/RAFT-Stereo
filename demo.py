@@ -102,16 +102,16 @@ if __name__ == '__main__':
     parser.add_argument("--vmax", type=int, default=255)
     parser.add_argument("--vmin", type=int)
     parser.add_argument('--folder', help="restore checkpoint", default=r"10k_val")
-    parser.add_argument('--output_directory', help="directory to save output", default="demo_output/rendered/")
+    parser.add_argument('--output_directory', help="directory to save output", default="demo_output/raw/")
     parser.add_argument("--rendered", action="store_true")
     parser.add_argument('--restore_ckpt', help="restore checkpoint",
                         default=r"checkpoints_new/10000_raft_stereo_rendered.pth")
 
     parser.add_argument('--save_numpy', action='store_true', help='save output as numpy arrays', default=True)
     parser.add_argument('-l', '--left_imgs', help="path to all first (left) frames",
-                        default="../Utils/test_raw/left/tl4_2021-09-29_13A/*.png")
+                        default="../Utils/test_raw/left/tl4_2021-09-29_13A/img_987_left.png")
     parser.add_argument('-r', '--right_imgs', help="path to all second (right) frames",
-                        default="../Utils/test_raw/right/tl_2021-09-29_13A/*.png")
+                        default="../Utils/test_raw/right/tl_2021-09-29_13A/img_987_right.png")
     parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision')
     parser.add_argument('--valid_iters', type=int, default=32, help='number of flow-field updates during forward pass')
 
