@@ -109,9 +109,9 @@ if __name__ == '__main__':
 
     parser.add_argument('--save_numpy', action='store_true', help='save output as numpy arrays', default=True)
     parser.add_argument('-l', '--left_imgs', help="path to all first (left) frames",
-                        default="../Utils/test_raw/left/tl4_2021-09-29_13A/img_363_left.png")
+                        default="../Utils/test_raw/left/tl4_2021-09-29_13A/*.png")
     parser.add_argument('-r', '--right_imgs', help="path to all second (right) frames",
-                        default="../Utils/test_raw/right/tl_2021-09-29_13A/img_363_right.png")
+                        default="../Utils/test_raw/right/tl_2021-09-29_13A/*.png")
     parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision')
     parser.add_argument('--valid_iters', type=int, default=32, help='number of flow-field updates during forward pass')
 
