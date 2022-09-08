@@ -44,7 +44,7 @@ def demo(args):
         left_images = []
         right_images = []
         if args.rendered:
-            with open("splits/new_rendered/test_files.txt", "r") as tf:
+            with open("splits/rendered_full_train/test_files.txt", "r") as tf:
                 test_lists = tf.readlines()
                 for line in test_lists:
                     view = line.split()[0]
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--vmax", type=int, default=255)
     parser.add_argument("--vmin", type=int)
-    parser.add_argument('--folder', help="restore checkpoint", default=r"110k_val")
+    parser.add_argument('--folder', help="restore checkpoint", default=r"110k_val_raw")
     parser.add_argument('--output_directory', help="directory to save output", default="demo_output/raw/")
     parser.add_argument("--rendered", action="store_true")
     parser.add_argument('--restore_ckpt', help="restore checkpoint",
